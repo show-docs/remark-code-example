@@ -1,0 +1,65 @@
+{
+  "name": "remark-code-example",
+  "version": "0.0.0",
+  "description": "Remark plugin to copy live code block as code example",
+  "license": "MIT",
+  "author": {
+    "name": "Eric Chen",
+    "email": "airkro@qq.com"
+  },
+  "keywords": [
+    "code-block",
+    "doc",
+    "document",
+    "documentation",
+    "docusaurus",
+    "markdown",
+    "remark",
+    "remark-plugin",
+    "remarkjs",
+    "site-generator"
+  ],
+  "homepage": "https://github.com/nice-move/remark-code-example",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nice-move/remark-code-example.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nice-move/remark-code-example/issues"
+  },
+  "main": "index.cjs",
+  "files": [],
+  "scripts": {
+    "lint:staged": "nice-move lint staged",
+    "prepare": "git config core.hooksPath .githooks",
+    "prepublishOnly": "npm run lint:staged && npm test",
+    "test": "ava --fail-fast"
+  },
+  "dependencies": {
+    "mdast-util-to-markdown": "^0.6.5",
+    "unist-util-visit": "^2.0.3",
+    "unist-util-visit-parents": "^3.1.1"
+  },
+  "devDependencies": {
+    "@nice-move/cli": "^0.7.1",
+    "@nice-move/eslint-config-base": "^0.6.4",
+    "@nice-move/prettier-config": "^0.5.4",
+    "ava": "^4.1.0",
+    "eslint": "^8.11.0",
+    "eslint-plugin-ava": "^13.2.0",
+    "garou": "^0.4.4",
+    "prettier": "^2.6.0",
+    "remark": "^13.0.0"
+  },
+  "engines": {
+    "node": "^12.22.0 || ^14.17.0 || >=16.13.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "eslintConfig": {
+    "extends": "@nice-move/eslint-config-base"
+  },
+  "prettier": "@nice-move/prettier-config"
+}
