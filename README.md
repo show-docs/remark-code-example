@@ -28,27 +28,25 @@ const codeSample = require('remark-code-example');
 const markdownText = readFileSync('example.md', 'utf8');
 
 remark()
-  .use(codeSample, {
-    copyAtBefore: false /* true by default */
-  })
+  .use(codeSample, {})
   .process(markdownText)
   .then((file) => console.info(file))
   .catch((error) => console.warn(error));
 ```
-
-### Options.copyAtBefore
-
-- type: boolean
-- default: true
-- required: false
-- description: Place copied code before original code
 
 ### Options.metas
 
 - type: object of string
 - default: {}
 - required: false
-- description: Define meta of code block meta by lang
+- description: Metas of example code block
+
+### Options.transforms
+
+- type: object of string
+- default: {}
+- required: false
+- description: Transform functions of alias code
 
 ## Syntax
 

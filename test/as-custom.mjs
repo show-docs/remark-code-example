@@ -21,12 +21,12 @@ test('code-example', async (t) => {
   getUtils(t).sameText(output, expected);
 });
 
-const input = `
+test('code-example-copy-before', async (t) => {
+  const input = `
 \`\`\`js code-example-copy=custom other
 \`\`\`
 `;
 
-test('code-example-copy-before', async (t) => {
   const expected = `
 \`\`\`\`custom
 \`\`\`js other
@@ -43,6 +43,11 @@ test('code-example-copy-before', async (t) => {
 });
 
 test('code-example-copy-after', async (t) => {
+  const input = `
+\`\`\`js code-example-copy=custom other copyToAfter
+\`\`\`
+`;
+
   const expected = `
 \`\`\`js other
 \`\`\`
@@ -53,12 +58,17 @@ test('code-example-copy-after', async (t) => {
 \`\`\`\`
 `;
 
-  const output = await transform(input, { copyAtBefore: false });
+  const output = await transform(input);
 
   getUtils(t).sameText(output, expected);
 });
 
 test('code-example-copy-with-meta', async (t) => {
+  const input = `
+\`\`\`js code-example-copy=custom other
+\`\`\`
+`;
+
   const expected = `
 \`\`\`\`custom title=example.md
 \`\`\`js other

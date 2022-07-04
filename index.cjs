@@ -4,9 +4,20 @@
 
 const astToString = require('mdast-util-to-markdown');
 const visit = require('unist-util-visit');
+const querystring = require('querystring');
 
 function ast2md(ast) {
   return astToString({ type: 'root', children: [ast] }).trim();
+}
+
+function parseMeta(meta) {
+  return querystring.parse(meta.trim().split(/\s/).join('&'));
+}
+
+function stringifyMeta(metas) {
+  return Object.entries(metas)
+    .map((pair) => pair.filter(Boolean).join('='))
+    .join(' ');
 }
 
 function visitCode(tree, key, visitor) {
@@ -17,48 +28,55 @@ function visitCode(tree, key, visitor) {
       meta &&
       meta.split(/\s/).some((item) => item.startsWith(key)),
     (node) => {
-      const metas = node.meta.split(/\s/);
+      const { [key]: io, copyToAfter, ...metas } = parseMeta(node.meta);
 
-      const lang =
-        metas.find((item) => item.startsWith(key)).split('=', 2)[1] ||
-        'markdown';
+      const lang = io || 'markdown';
 
-      visitor(
+      visitor({
         node,
         lang,
-        metas.filter((item) => !item.startsWith(key)).join(' '),
-      );
+        copyToAfter: (copyToAfter === '' ? true : copyToAfter) || false,
+        meta: stringifyMeta(metas),
+      });
     },
   );
 }
 
-module.exports = function Plugin({ copyAtBefore = true, metas = {} } = {}) {
+module.exports = function Plugin({ metas = {}, transforms = {} } = {}) {
   return (tree) => {
-    visitCode(tree, 'code-alias-copy', (node, lang, meta) => {
+    visitCode(tree, 'code-alias-copy', ({ node, lang, copyToAfter, meta }) => {
       const index = tree.children.indexOf(node);
 
       node.meta = meta;
 
-      tree.children.splice(copyAtBefore ? index : index + 1, 0, {
+      tree.children.splice(copyToAfter ? index + 1 : index, 0, {
         ...node,
         lang,
+        value:
+          typeof transforms[lang] === 'function'
+            ? transforms[lang](node.value)
+            : node.value,
       });
     });
 
-    visitCode(tree, 'code-example-copy', (node, lang, meta) => {
-      const index = tree.children.indexOf(node);
+    visitCode(
+      tree,
+      'code-example-copy',
+      ({ node, lang, copyToAfter = false, meta }) => {
+        const index = tree.children.indexOf(node);
 
-      node.meta = meta;
+        node.meta = meta;
 
-      tree.children.splice(copyAtBefore ? index : index + 1, 0, {
-        type: 'code',
-        lang,
-        meta: metas ? metas[lang] || null : null,
-        value: ast2md({ ...node }),
-      });
-    });
+        tree.children.splice(copyToAfter ? index + 1 : index, 0, {
+          type: 'code',
+          lang,
+          meta: metas ? metas[lang] || null : null,
+          value: ast2md({ ...node }),
+        });
+      },
+    );
 
-    visitCode(tree, 'code-example', (node, lang, meta) => {
+    visitCode(tree, 'code-example', ({ node, lang, meta }) => {
       node.value = ast2md({ ...node, meta });
       node.lang = lang;
       node.meta = metas ? metas[lang] || null : null;

@@ -3,12 +3,12 @@ import test from 'ava';
 
 import { getUtils, transform } from './helper/lib.mjs';
 
-const input = `
-  \`\`\`css other code-alias-copy=less
-  \`\`\`
+test('code-alias-copy-before', async (t) => {
+  const input = `
+\`\`\`css other code-alias-copy=less
+\`\`\`
 `;
 
-test('code-alias-copy-before', async (t) => {
   const expected = `
 \`\`\`less other
 \`\`\`
@@ -23,6 +23,11 @@ test('code-alias-copy-before', async (t) => {
 });
 
 test('code-alias-copy-after', async (t) => {
+  const input = `
+\`\`\`css other code-alias-copy=less copyToAfter
+\`\`\`
+`;
+
   const expected = `
 \`\`\`css other
 \`\`\`
@@ -31,7 +36,33 @@ test('code-alias-copy-after', async (t) => {
 \`\`\`
 `;
 
-  const output = await transform(input, { copyAtBefore: false });
+  const output = await transform(input);
+
+  getUtils(t).sameText(output, expected);
+});
+
+test('code-alias-copy-transform', async (t) => {
+  const input = `
+\`\`\`css other code-alias-copy=less
+body {}
+\`\`\`
+`;
+
+  const expected = `
+\`\`\`less other
+html {}
+\`\`\`
+
+\`\`\`css other
+body {}
+\`\`\`
+`;
+
+  const output = await transform(input, {
+    transforms: {
+      less: (original) => original.replace('body', 'html'),
+    },
+  });
 
   getUtils(t).sameText(output, expected);
 });
