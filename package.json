@@ -1,6 +1,6 @@
 {
   "name": "remark-code-example",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Remark plugin to copy live code block as code example",
   "license": "MIT",
   "author": {
@@ -27,39 +27,43 @@
   "bugs": {
     "url": "https://github.com/nice-move/remark-code-example/issues"
   },
-  "main": "index.cjs",
+  "main": "index.mjs",
   "files": [],
+  "type": "module",
   "scripts": {
     "lint:staged": "nice-move lint staged",
-    "prepare": "git config core.hooksPath .githooks",
+    "prepare": "nice-move git hooks",
     "prepublishOnly": "npm run lint:staged && npm test",
     "test": "ava --fail-fast"
   },
   "dependencies": {
-    "mdast-util-to-markdown": "^0.6.5",
-    "unist-util-visit": "^2.0.3",
-    "unist-util-visit-parents": "^3.1.1"
+    "mdast-util-to-markdown": "^1.3.0",
+    "unist-util-visit": "^4.1.0"
   },
   "devDependencies": {
+    "@bring-it/npm": "^0.0.1",
     "@nice-move/cli": "^0.9.6",
-    "@nice-move/eslint-config-base": "^0.7.4",
-    "@nice-move/prettier-config": "^0.6.0",
-    "ava": "^4.3.0",
-    "eslint": "^8.19.0",
+    "@nice-move/eslint-config-base": "^0.8.0",
+    "@nice-move/prettier-config": "^0.7.0",
+    "ava": "^4.3.1",
+    "eslint": "^8.20.0",
     "eslint-plugin-ava": "^13.2.0",
     "garou": "^0.4.14",
     "prettier": "^2.7.1",
-    "remark": "^13.0.0"
+    "remark": "^14.0.2"
   },
   "engines": {
-    "node": "^14.17.0 || ^16.13.0 || >=18.0.0"
+    "node": "^16.13.0 || >=18.0.0"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "eslintConfig": {
-    "extends": "@nice-move/eslint-config-base"
+    "extends": "@nice-move/eslint-config-base",
+    "rules": {
+      "unicorn/prefer-top-level-await": "off"
+    }
   },
   "prettier": "@nice-move/prettier-config"
 }

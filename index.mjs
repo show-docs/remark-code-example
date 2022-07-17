@@ -1,13 +1,10 @@
-'use strict';
+import querystring from 'querystring';
 
-/* eslint-disable no-param-reassign */
-
-const astToString = require('mdast-util-to-markdown');
-const visit = require('unist-util-visit');
-const querystring = require('querystring');
+import { toMarkdown } from 'mdast-util-to-markdown';
+import { visit } from 'unist-util-visit';
 
 function ast2md(ast) {
-  return astToString({ type: 'root', children: [ast] }).trim();
+  return toMarkdown({ type: 'root', children: [ast] }).trim();
 }
 
 function parseMeta(meta) {
@@ -42,7 +39,9 @@ function visitCode(tree, key, visitor) {
   );
 }
 
-module.exports = function Plugin({ metas = {}, transforms = {} } = {}) {
+/* eslint-disable no-param-reassign */
+
+export function remarkCodeExample({ metas = {}, transforms = {} } = {}) {
   return (tree) => {
     visitCode(tree, 'code-alias-copy', ({ node, lang, copyToAfter, meta }) => {
       const index = tree.children.indexOf(node);
@@ -82,4 +81,4 @@ module.exports = function Plugin({ metas = {}, transforms = {} } = {}) {
       node.meta = metas ? metas[lang] || null : null;
     });
   };
-};
+}

@@ -20,15 +20,16 @@ npm install remark remark-code-example --save-dev
 
 ## Usage
 
-```cjs
-const readFileSync = require('fs');
-const remark = require('remark');
-const codeSample = require('remark-code-example');
+```mjs
+import readFileSync from 'fs';
+
+import { remark } from 'remark';
+import { remarkCodeExample } from 'remark-code-example';
 
 const markdownText = readFileSync('example.md', 'utf8');
 
 remark()
-  .use(codeSample, {})
+  .use(remarkCodeSample, {})
   .process(markdownText)
   .then((file) => console.info(file))
   .catch((error) => console.warn(error));
