@@ -23,17 +23,17 @@ test('code-example', async (t) => {
 
 test('code-example-copy-before', async (t) => {
   const input = `
-\`\`\`js code-example-copy=custom other
+\`\`\`js code-example-copy=custom other a=
 \`\`\`
 `;
 
   const expected = `
 \`\`\`\`custom
-\`\`\`js other
+\`\`\`js other a
 \`\`\`
 \`\`\`\`
 
-\`\`\`js other
+\`\`\`js other a
 \`\`\`
 `;
 
@@ -80,7 +80,11 @@ test('code-example-copy-with-meta', async (t) => {
 `;
 
   const output = await transform(input, {
-    metas: { custom: 'title=example.md' },
+    metas: {
+      custom: {
+        title: 'example.md',
+      },
+    },
   });
 
   getUtils(t).sameText(output, expected);

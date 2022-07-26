@@ -12,9 +12,12 @@ function parseMeta(meta) {
 }
 
 function stringifyMeta(metas) {
-  return Object.entries(metas)
-    .map((pair) => pair.filter(Boolean).join('='))
-    .join(' ');
+  return metas
+    ? Object.entries(metas)
+        .map((pair) => pair.filter((item) => item !== '').join('='))
+        .join(' ')
+        .trim() || null
+    : null;
 }
 
 function visitCode(tree, key, visitor) {
@@ -25,15 +28,13 @@ function visitCode(tree, key, visitor) {
       meta &&
       meta.split(/\s/).some((item) => item.startsWith(key)),
     (node) => {
-      const { [key]: io, copyToAfter, ...metas } = parseMeta(node.meta);
-
-      const lang = io || 'markdown';
+      const { [key]: lang, copyToAfter, ...meta } = parseMeta(node.meta);
 
       visitor({
         node,
-        lang,
+        lang: lang || 'markdown',
         copyToAfter: (copyToAfter === '' ? true : copyToAfter) || false,
-        meta: stringifyMeta(metas),
+        meta,
       });
     },
   );
@@ -46,7 +47,7 @@ export function remarkCodeExample({ metas = {}, transforms = {} } = {}) {
     visitCode(tree, 'code-alias-copy', ({ node, lang, copyToAfter, meta }) => {
       const index = tree.children.indexOf(node);
 
-      node.meta = meta;
+      node.meta = stringifyMeta(meta);
 
       tree.children.splice(copyToAfter ? index + 1 : index, 0, {
         ...node,
@@ -64,21 +65,23 @@ export function remarkCodeExample({ metas = {}, transforms = {} } = {}) {
       ({ node, lang, copyToAfter = false, meta }) => {
         const index = tree.children.indexOf(node);
 
-        node.meta = meta;
+        node.meta = stringifyMeta(meta);
 
-        tree.children.splice(copyToAfter ? index + 1 : index, 0, {
+        const newIndex = copyToAfter ? index + 1 : index;
+
+        tree.children.splice(newIndex, 0, {
           type: 'code',
           lang,
-          meta: metas ? metas[lang] || null : null,
           value: ast2md({ ...node }),
+          meta: stringifyMeta(metas?.[lang]),
         });
       },
     );
 
     visitCode(tree, 'code-example', ({ node, lang, meta }) => {
-      node.value = ast2md({ ...node, meta });
+      node.value = ast2md({ ...node, meta: stringifyMeta(meta) });
       node.lang = lang;
-      node.meta = metas ? metas[lang] || null : null;
+      node.meta = stringifyMeta(metas?.[lang]);
     });
   };
 }

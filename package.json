@@ -34,7 +34,7 @@
     "lint:staged": "nice-move lint staged",
     "prepare": "nice-move git hooks",
     "prepublishOnly": "npm run lint:staged && npm test",
-    "test": "ava --fail-fast"
+    "test": "ava --fail-fast -c 1"
   },
   "dependencies": {
     "mdast-util-to-markdown": "^1.3.0",
