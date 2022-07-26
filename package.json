@@ -42,13 +42,13 @@
   },
   "devDependencies": {
     "@bring-it/npm": "^0.0.1",
-    "@nice-move/cli": "^0.9.6",
-    "@nice-move/eslint-config-base": "^0.8.0",
+    "@nice-move/cli": "^0.9.7",
+    "@nice-move/eslint-config-base": "^0.8.2",
     "@nice-move/prettier-config": "^0.7.0",
     "ava": "^4.3.1",
     "eslint": "^8.20.0",
     "eslint-plugin-ava": "^13.2.0",
-    "garou": "^0.4.14",
+    "garou": "^0.5.0",
     "prettier": "^2.7.1",
     "remark": "^14.0.2"
   },
@@ -60,10 +60,7 @@
     "registry": "https://registry.npmjs.org/"
   },
   "eslintConfig": {
-    "extends": "@nice-move/eslint-config-base",
-    "rules": {
-      "unicorn/prefer-top-level-await": "off"
-    }
+    "extends": "@nice-move/eslint-config-base"
   },
   "prettier": "@nice-move/prettier-config"
 }
