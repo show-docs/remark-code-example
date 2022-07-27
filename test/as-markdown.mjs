@@ -5,12 +5,12 @@ import { getUtils, transform } from './helper/lib.mjs';
 
 test('code-example', async (t) => {
   const input = `
-\`\`\`css other code-example
+\`\`\`css other code-example copy-as-tab
 \`\`\`
 `;
 
   const expected = `
-\`\`\`\`markdown
+\`\`\`\`markdown tab
 \`\`\`css other
 \`\`\`
 \`\`\`\`
@@ -23,17 +23,17 @@ test('code-example', async (t) => {
 
 test('code-example-copy-before', async (t) => {
   const input = `
-\`\`\`js code-example-copy other a=
+\`\`\`js code-example-copy other a= copy-as-tab=0
 \`\`\`
 `;
 
   const expected = `
-\`\`\`\`markdown
+\`\`\`\`markdown tab=0
 \`\`\`js other a
 \`\`\`
 \`\`\`\`
 
-\`\`\`js other a
+\`\`\`js other a tab=0
 \`\`\`
 `;
 
@@ -44,7 +44,7 @@ test('code-example-copy-before', async (t) => {
 
 test('code-example-copy-after', async (t) => {
   const input = `
-\`\`\`js code-example-copy other copyToAfter
+\`\`\`js code-example-copy other copy-to-after
 \`\`\`
 `;
 
@@ -65,17 +65,17 @@ test('code-example-copy-after', async (t) => {
 
 test('code-example-copy-with-meta', async (t) => {
   const input = `
-\`\`\`js code-example-copy other
+\`\`\`js code-example-copy other copy-as-tab
 \`\`\`
 `;
 
   const expected = `
-\`\`\`\`markdown title=example.md
+\`\`\`\`markdown title=example.md tab
 \`\`\`js other
 \`\`\`
 \`\`\`\`
 
-\`\`\`js other
+\`\`\`js other tab
 \`\`\`
 `;
 

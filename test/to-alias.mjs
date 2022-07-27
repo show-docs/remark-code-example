@@ -43,7 +43,7 @@ test('code-alias-copy-before', async (t) => {
 
 test('code-alias-copy-after', async (t) => {
   const input = `
-\`\`\`css tab code-alias-copy=less copyToAfter
+\`\`\`css tab code-alias-copy=less copy-to-after
 \`\`\`
 `;
 

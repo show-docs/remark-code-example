@@ -30,10 +30,17 @@ function visitCode(tree, key, visitor) {
     (node) => {
       const { [key]: lang, ...meta } = parseMeta(node.meta);
 
-      const copyToAfter = 'copyToAfter' in meta;
+      const copyToAfter = 'copy-to-after' in meta;
 
       if (copyToAfter) {
-        delete meta.copyToAfter;
+        delete meta['copy-to-after'];
+      }
+
+      const hasTab = 'copy-as-tab' in meta;
+      const { 'copy-as-tab': copyAsTab } = meta;
+
+      if (hasTab && key !== 'code-alias-copy') {
+        delete meta['copy-as-tab'];
       }
 
       visitor({
@@ -41,6 +48,7 @@ function visitCode(tree, key, visitor) {
         lang: lang || 'markdown',
         copyToAfter,
         meta,
+        extraMeta: hasTab ? { tab: copyAsTab } : undefined,
       });
     },
   );
@@ -69,26 +77,28 @@ export function remarkCodeExample({ metas = {} } = {}) {
     visitCode(
       tree,
       'code-example-copy',
-      ({ node, lang, copyToAfter = false, meta }) => {
+      ({ node, lang, copyToAfter = false, meta, extraMeta }) => {
         const index = tree.children.indexOf(node);
-
-        node.meta = stringifyMeta(meta);
 
         const newIndex = copyToAfter ? index + 1 : index;
 
         tree.children.splice(newIndex, 0, {
           type: 'code',
           lang,
-          value: ast2md({ ...node }),
-          meta: stringifyMeta(metas?.[lang]),
+          value: ast2md({ ...node, meta: stringifyMeta(meta) }),
+          meta: stringifyMeta({ ...metas?.[lang], ...extraMeta }),
         });
+
+        node.meta = stringifyMeta({ ...meta, ...extraMeta });
       },
     );
 
-    visitCode(tree, 'code-example', ({ node, lang, meta }) => {
+    visitCode(tree, 'code-example', ({ node, lang, meta, extraMeta }) => {
       node.value = ast2md({ ...node, meta: stringifyMeta(meta) });
+
       node.lang = lang;
-      node.meta = stringifyMeta(metas?.[lang]);
+
+      node.meta = stringifyMeta({ ...metas?.[lang], ...extraMeta });
     });
   };
 }
