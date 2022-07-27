@@ -1,6 +1,6 @@
 {
   "name": "remark-code-example",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Remark plugin to copy live code block as code example",
   "license": "MIT",
   "author": {

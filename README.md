@@ -50,7 +50,7 @@ remark()
 Turn
 
 ```mermaid code-example
-flowchart LR
+flowchart
   Start --> Stop
 ```
 
@@ -58,7 +58,7 @@ Into
 
 ````markdown
 ```mermaid
-flowchart LR
+flowchart
   Start --> Stop
 ```
 ````
@@ -70,23 +70,23 @@ flowchart LR
 Turn
 
 ```mermaid code-example-copy
-flowchart LR
+flowchart
   Start --> Stop
 ```
 
 Into
 
+```mermaid
+flowchart
+  Start --> Stop
+```
+
 ````markdown
 ```mermaid
-flowchart LR
+flowchart
   Start --> Stop
 ```
 ````
-
-```mermaid
-flowchart LR
-  Start --> Stop
-```
 `````
 
 ### code-alias-copy
@@ -95,19 +95,19 @@ flowchart LR
 Turn
 
 ```mermaid code-alias-copy=diagram
-flowchart LR
+flowchart
   Start --> Stop
 ```
 
 Into
 
-```diagram
-flowchart LR
+```mermaid
+flowchart
   Start --> Stop
 ```
 
-```mermaid
-flowchart LR
+```diagram
+flowchart
   Start --> Stop
 ```
 ````

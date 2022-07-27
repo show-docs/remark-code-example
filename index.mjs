@@ -30,10 +30,10 @@ function visitCode(tree, key, visitor) {
     (node) => {
       const { [key]: lang, ...meta } = parseMeta(node.meta);
 
-      const copyToAfter = 'copy-to-after' in meta;
+      const copyToBefore = '<-copy' in meta;
 
-      if (copyToAfter) {
-        delete meta['copy-to-after'];
+      if (copyToBefore) {
+        delete meta['<-copy'];
       }
 
       const hasTab = 'copy-as-tab' in meta;
@@ -46,7 +46,7 @@ function visitCode(tree, key, visitor) {
       visitor({
         node,
         lang: lang || 'markdown',
-        copyToAfter,
+        copyToBefore,
         meta,
         extraMeta: hasTab ? { tab: copyAsTab } : undefined,
       });
@@ -61,12 +61,14 @@ export function remarkCodeExample({ metas = {} } = {}) {
     visitCode(
       tree,
       'code-alias-copy',
-      ({ node, lang, copyToAfter = false, meta }) => {
+      ({ node, lang, copyToBefore = false, meta }) => {
         const index = tree.children.indexOf(node);
 
         node.meta = stringifyMeta(meta);
 
-        tree.children.splice(copyToAfter ? index + 1 : index, 0, {
+        const newIndex = copyToBefore ? index : index + 1;
+
+        tree.children.splice(newIndex, 0, {
           ...node,
           lang,
           value: node.value,
@@ -77,10 +79,10 @@ export function remarkCodeExample({ metas = {} } = {}) {
     visitCode(
       tree,
       'code-example-copy',
-      ({ node, lang, copyToAfter = false, meta, extraMeta }) => {
+      ({ node, lang, copyToBefore = false, meta, extraMeta }) => {
         const index = tree.children.indexOf(node);
 
-        const newIndex = copyToAfter ? index + 1 : index;
+        const newIndex = copyToBefore ? index : index + 1;
 
         tree.children.splice(newIndex, 0, {
           type: 'code',

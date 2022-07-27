@@ -21,20 +21,20 @@ test('code-example', async (t) => {
   getUtils(t).sameText(output, expected);
 });
 
-test('code-example-copy-before', async (t) => {
+test('code-example-copy', async (t) => {
   const input = `
 \`\`\`js code-example-copy other a= copy-as-tab=0
 \`\`\`
 `;
 
   const expected = `
+\`\`\`js other a tab=0
+\`\`\`
+
 \`\`\`\`markdown tab=0
 \`\`\`js other a
 \`\`\`
 \`\`\`\`
-
-\`\`\`js other a tab=0
-\`\`\`
 `;
 
   const output = await transform(input);
@@ -42,20 +42,20 @@ test('code-example-copy-before', async (t) => {
   getUtils(t).sameText(output, expected);
 });
 
-test('code-example-copy-after', async (t) => {
+test('code-example-copy-before', async (t) => {
   const input = `
-\`\`\`js code-example-copy other copy-to-after
+\`\`\`js code-example-copy other <-copy
 \`\`\`
 `;
 
   const expected = `
-\`\`\`js other
-\`\`\`
-
 \`\`\`\`markdown
 \`\`\`js other
 \`\`\`
 \`\`\`\`
+
+\`\`\`js other
+\`\`\`
 `;
 
   const output = await transform(input);
@@ -70,13 +70,13 @@ test('code-example-copy-with-meta', async (t) => {
 `;
 
   const expected = `
+\`\`\`js other tab
+\`\`\`
+
 \`\`\`\`markdown title=example.md tab
 \`\`\`js other
 \`\`\`
 \`\`\`\`
-
-\`\`\`js other tab
-\`\`\`
 `;
 
   const output = await transform(input, {
