@@ -42,13 +42,6 @@ remark()
 - required: false
 - description: Metas of example code block
 
-### Options.transforms
-
-- type: object of string
-- default: {}
-- required: false
-- description: Transform functions of alias code
-
 ## Syntax
 
 ### code-example

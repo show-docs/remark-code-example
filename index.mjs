@@ -28,12 +28,18 @@ function visitCode(tree, key, visitor) {
       meta &&
       meta.split(/\s/).some((item) => item.startsWith(key)),
     (node) => {
-      const { [key]: lang, copyToAfter, ...meta } = parseMeta(node.meta);
+      const { [key]: lang, ...meta } = parseMeta(node.meta);
+
+      const copyToAfter = 'copyToAfter' in meta;
+
+      if (copyToAfter) {
+        delete meta.copyToAfter;
+      }
 
       visitor({
         node,
         lang: lang || 'markdown',
-        copyToAfter: (copyToAfter === '' ? true : copyToAfter) || false,
+        copyToAfter,
         meta,
       });
     },
@@ -42,22 +48,23 @@ function visitCode(tree, key, visitor) {
 
 /* eslint-disable no-param-reassign */
 
-export function remarkCodeExample({ metas = {}, transforms = {} } = {}) {
+export function remarkCodeExample({ metas = {} } = {}) {
   return (tree) => {
-    visitCode(tree, 'code-alias-copy', ({ node, lang, copyToAfter, meta }) => {
-      const index = tree.children.indexOf(node);
+    visitCode(
+      tree,
+      'code-alias-copy',
+      ({ node, lang, copyToAfter = false, meta }) => {
+        const index = tree.children.indexOf(node);
 
-      node.meta = stringifyMeta(meta);
+        node.meta = stringifyMeta(meta);
 
-      tree.children.splice(copyToAfter ? index + 1 : index, 0, {
-        ...node,
-        lang,
-        value:
-          typeof transforms[lang] === 'function'
-            ? transforms[lang](node.value)
-            : node.value,
-      });
-    });
+        tree.children.splice(copyToAfter ? index + 1 : index, 0, {
+          ...node,
+          lang,
+          value: node.value,
+        });
+      },
+    );
 
     visitCode(
       tree,

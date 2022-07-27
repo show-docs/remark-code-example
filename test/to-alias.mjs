@@ -59,29 +59,3 @@ test('code-alias-copy-after', async (t) => {
 
   getUtils(t).sameText(output, expected);
 });
-
-test('code-alias-copy-transform', async (t) => {
-  const input = `
-\`\`\`css tab code-alias-copy=less
-body {}
-\`\`\`
-`;
-
-  const expected = `
-\`\`\`less tab
-html {}
-\`\`\`
-
-\`\`\`css tab
-body {}
-\`\`\`
-`;
-
-  const output = await transform(input, {
-    transforms: {
-      less: (original) => original.replace('body', 'html'),
-    },
-  });
-
-  getUtils(t).sameText(output, expected);
-});
