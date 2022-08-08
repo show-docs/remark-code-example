@@ -8,25 +8,22 @@ function ast2md(ast) {
 }
 
 function parseMeta(meta) {
-  return querystring.parse(meta.trim().split(/\s/).join('&'));
+  return querystring.parse(meta, ' ');
 }
 
 function stringifyMeta(metas) {
   return metas
-    ? Object.entries(metas)
-        .map((pair) => pair.filter((item) => item !== '').join('='))
-        .join(' ')
-        .trim() || null
+    ? querystring
+        .stringify(metas, ' ')
+        .replaceAll('= ', ' ')
+        .replace(/=$/g, '') || null
     : null;
 }
 
 function visitCode(tree, key, visitor) {
   visit(
     tree,
-    ({ type, meta }) =>
-      type === 'code' &&
-      meta &&
-      meta.split(/\s/).some((item) => item.startsWith(key)),
+    ({ type, meta }) => type === 'code' && meta && key in parseMeta(meta),
     (node) => {
       const { [key]: lang, ...meta } = parseMeta(node.meta);
 
