@@ -23,15 +23,15 @@ test('code-example', async (t) => {
 
 test('code-example-copy', async (t) => {
   const input = `
-\`\`\`js code-example-copy other a= copy-as-tab=0
+\`\`\`js code-example-copy other a= copy-as-tab=摆
 \`\`\`
 `;
 
   const expected = `
-\`\`\`js other a tab=0
+\`\`\`js other a tab=摆
 \`\`\`
 
-\`\`\`\`markdown tab=0
+\`\`\`\`markdown tab=摆
 \`\`\`js other a
 \`\`\`
 \`\`\`\`

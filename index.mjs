@@ -14,7 +14,9 @@ function parseMeta(meta) {
 function stringifyMeta(metas) {
   return metas
     ? querystring
-        .stringify(metas, ' ')
+        .stringify(metas, ' ', '=', {
+          encodeURIComponent: (io) => io,
+        })
         .replaceAll('= ', ' ')
         .replace(/=$/g, '') || null
     : null;
@@ -24,7 +26,7 @@ function visitCode(tree, key, visitor) {
   visit(
     tree,
     ({ type, meta }) => type === 'code' && meta && key in parseMeta(meta),
-    (node) => {
+    (node, index) => {
       const { [key]: lang, ...meta } = parseMeta(node.meta);
 
       const copyToBefore = '<-copy' in meta;
@@ -42,6 +44,7 @@ function visitCode(tree, key, visitor) {
 
       visitor({
         node,
+        index,
         lang: lang || 'markdown',
         copyToBefore,
         meta,
@@ -58,9 +61,7 @@ export function remarkCodeExample({ metas = {} } = {}) {
     visitCode(
       tree,
       'code-alias-copy',
-      ({ node, lang, copyToBefore = false, meta }) => {
-        const index = tree.children.indexOf(node);
-
+      ({ node, index, lang, copyToBefore = false, meta }) => {
         node.meta = stringifyMeta(meta);
 
         const newIndex = copyToBefore ? index : index + 1;
@@ -76,9 +77,7 @@ export function remarkCodeExample({ metas = {} } = {}) {
     visitCode(
       tree,
       'code-example-copy',
-      ({ node, lang, copyToBefore = false, meta, extraMeta }) => {
-        const index = tree.children.indexOf(node);
-
+      ({ node, index, lang, copyToBefore = false, meta, extraMeta }) => {
         const newIndex = copyToBefore ? index : index + 1;
 
         tree.children.splice(newIndex, 0, {
