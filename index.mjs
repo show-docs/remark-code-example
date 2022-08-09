@@ -1,5 +1,4 @@
-import querystring from 'querystring';
-
+import { getValue, parse, stringify } from 'markdown-code-block-meta';
 import { toMarkdown } from 'mdast-util-to-markdown';
 import { visit } from 'unist-util-visit';
 
@@ -7,48 +6,43 @@ function ast2md(ast) {
   return toMarkdown({ type: 'root', children: [ast] }).trim();
 }
 
-function parseMeta(meta) {
-  return querystring.parse(meta, ' ');
-}
-
-function stringifyMeta(metas) {
-  return metas
-    ? querystring
-        .stringify(metas, ' ', '=', {
-          encodeURIComponent: (io) => io,
-        })
-        .replaceAll('= ', ' ')
-        .replace(/=$/g, '') || null
-    : null;
-}
-
 function visitCode(tree, key, visitor) {
   visit(
     tree,
-    ({ type, meta }) => type === 'code' && meta && key in parseMeta(meta),
+    ({ type, meta }) => type === 'code' && meta && parse(meta).has(key),
     (node, index) => {
-      const { [key]: lang, ...meta } = parseMeta(node.meta);
+      const meta = parse(node.meta);
 
-      const copyToBefore = '<-copy' in meta;
+      const lang = getValue(meta.get(key)) || 'markdown';
+
+      meta.delete(key);
+
+      const copyToBefore = meta.has('copy-to-before');
 
       if (copyToBefore) {
-        delete meta['<-copy'];
+        meta.delete('copy-to-before');
       }
 
-      const hasTab = 'copy-as-tab' in meta;
-      const { 'copy-as-tab': copyAsTab } = meta;
+      const hasTab = meta.has('copy-as-tab');
+      const copyAsTab = meta.get('copy-as-tab');
 
       if (hasTab && key !== 'code-alias-copy') {
-        delete meta['copy-as-tab'];
+        meta.delete('copy-as-tab');
+      }
+
+      const newMeta = new Map();
+
+      if (hasTab) {
+        newMeta.set('tab', copyAsTab);
       }
 
       visitor({
         node,
         index,
-        lang: lang || 'markdown',
+        lang,
         copyToBefore,
         meta,
-        extraMeta: hasTab ? { tab: copyAsTab } : undefined,
+        newMeta,
       });
     },
   );
@@ -62,7 +56,7 @@ export function remarkCodeExample({ metas = {} } = {}) {
       tree,
       'code-alias-copy',
       ({ node, index, lang, copyToBefore = false, meta }) => {
-        node.meta = stringifyMeta(meta);
+        node.meta = stringify(meta);
 
         const newIndex = copyToBefore ? index : index + 1;
 
@@ -77,26 +71,30 @@ export function remarkCodeExample({ metas = {} } = {}) {
     visitCode(
       tree,
       'code-example-copy',
-      ({ node, index, lang, copyToBefore = false, meta, extraMeta }) => {
+      ({ node, index, lang, copyToBefore = false, meta, newMeta }) => {
         const newIndex = copyToBefore ? index : index + 1;
+
+        const extra = Object.entries(metas?.[lang] ?? {});
 
         tree.children.splice(newIndex, 0, {
           type: 'code',
           lang,
-          value: ast2md({ ...node, meta: stringifyMeta(meta) }),
-          meta: stringifyMeta({ ...metas?.[lang], ...extraMeta }),
+          value: ast2md({ ...node, meta: stringify(meta) }),
+          meta: stringify(new Map([...extra, ...newMeta])),
         });
 
-        node.meta = stringifyMeta({ ...meta, ...extraMeta });
+        node.meta = stringify(new Map([...meta, ...newMeta]));
       },
     );
 
-    visitCode(tree, 'code-example', ({ node, lang, meta, extraMeta }) => {
-      node.value = ast2md({ ...node, meta: stringifyMeta(meta) });
+    visitCode(tree, 'code-example', ({ node, lang, meta, newMeta }) => {
+      node.value = ast2md({ ...node, meta: stringify(meta) });
 
       node.lang = lang;
 
-      node.meta = stringifyMeta({ ...metas?.[lang], ...extraMeta });
+      const extra = Object.entries(metas?.[lang] ?? {});
+
+      node.meta = stringify(new Map([...extra, ...newMeta]));
     });
   };
 }

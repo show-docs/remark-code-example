@@ -1,6 +1,6 @@
 {
   "name": "remark-code-example",
-  "version": "0.4.1",
+  "version": "0.5.1",
   "description": "Remark plugin to copy live code block as code example",
   "license": "MIT",
   "author": {
@@ -37,13 +37,14 @@
     "test": "ava --fail-fast"
   },
   "dependencies": {
+    "markdown-code-block-meta": "^0.0.2",
     "mdast-util-to-markdown": "^1.3.0",
     "unist-util-visit": "^4.1.0"
   },
   "devDependencies": {
-    "@bring-it/npm": "^0.0.1",
+    "@bring-it/npm": "^0.0.3",
     "@nice-move/cli": "^0.9.8",
-    "@nice-move/eslint-config-base": "^0.8.3",
+    "@nice-move/eslint-config-base": "^0.8.5",
     "@nice-move/prettier-config": "^0.7.1",
     "ava": "^4.3.1",
     "eslint": "^8.21.0",

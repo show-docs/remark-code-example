@@ -111,3 +111,8 @@ flowchart
   Start --> Stop
 ```
 ````
+
+## Related
+
+- [markdown-code-block-meta](https://github.com/nice-move/markdown-code-block-meta)
+- [remark-kroki](https://github.com/nice-move/remark-kroki)

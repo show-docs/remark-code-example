@@ -19,7 +19,7 @@ test('code-alias', async (t) => {
 
   const output = await transform(input);
 
-  getUtils(t).sameText(output, expected);
+  getUtils(t).sameText(expected, output);
 });
 
 test('code-alias-copy', async (t) => {
@@ -38,12 +38,12 @@ test('code-alias-copy', async (t) => {
 
   const output = await transform(input);
 
-  getUtils(t).sameText(output, expected);
+  getUtils(t).sameText(expected, output);
 });
 
 test('code-alias-copy-before', async (t) => {
   const input = `
-\`\`\`css tab code-alias-copy=less <-copy
+\`\`\`css tab code-alias-copy=less copy-to-before
 \`\`\`
 `;
 
@@ -57,5 +57,5 @@ test('code-alias-copy-before', async (t) => {
 
   const output = await transform(input);
 
-  getUtils(t).sameText(output, expected);
+  getUtils(t).sameText(expected, output);
 });

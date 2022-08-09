@@ -18,7 +18,7 @@ test('code-example', async (t) => {
 
   const output = await transform(input);
 
-  getUtils(t).sameText(output, expected);
+  getUtils(t).sameText(expected, output);
 });
 
 test('code-example-copy', async (t) => {
@@ -28,23 +28,23 @@ test('code-example-copy', async (t) => {
 `;
 
   const expected = `
-\`\`\`js other a tab=0
+\`\`\`js other a= tab=0
 \`\`\`
 
 \`\`\`\`custom tab=0
-\`\`\`js other a
+\`\`\`js other a=
 \`\`\`
 \`\`\`\`
 `;
 
   const output = await transform(input);
 
-  getUtils(t).sameText(output, expected);
+  getUtils(t).sameText(expected, output);
 });
 
 test('code-example-copy-before', async (t) => {
   const input = `
-\`\`\`js code-example-copy=custom other <-copy
+\`\`\`js code-example-copy=custom other copy-to-before
 \`\`\`
 `;
 
@@ -60,7 +60,7 @@ test('code-example-copy-before', async (t) => {
 
   const output = await transform(input);
 
-  getUtils(t).sameText(output, expected);
+  getUtils(t).sameText(expected, output);
 });
 
 test('code-example-copy-with-meta', async (t) => {
@@ -87,5 +87,5 @@ test('code-example-copy-with-meta', async (t) => {
     },
   });
 
-  getUtils(t).sameText(output, expected);
+  getUtils(t).sameText(expected, output);
 });
