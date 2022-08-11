@@ -115,4 +115,5 @@ flowchart
 ## Related
 
 - [markdown-code-block-meta](https://github.com/nice-move/markdown-code-block-meta)
+- [remark-docusaurus](https://github.com/nice-move/remark-docusaurus)
 - [remark-kroki](https://github.com/nice-move/remark-kroki)

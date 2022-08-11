@@ -10,7 +10,7 @@ function visitCode(tree, key, visitor) {
   visit(
     tree,
     ({ type, meta }) => type === 'code' && meta && parse(meta).has(key),
-    (node, index) => {
+    (node, index, parent) => {
       const meta = parse(node.meta);
 
       const lang = getValue(meta.get(key)) || 'markdown';
@@ -39,6 +39,7 @@ function visitCode(tree, key, visitor) {
       visitor({
         node,
         index,
+        parent,
         lang,
         copyToBefore,
         meta,
@@ -55,12 +56,12 @@ export function remarkCodeExample({ metas = {} } = {}) {
     visitCode(
       tree,
       'code-alias-copy',
-      ({ node, index, lang, copyToBefore = false, meta }) => {
+      ({ node, index, parent, lang, copyToBefore = false, meta }) => {
         node.meta = stringify(meta);
 
         const newIndex = copyToBefore ? index : index + 1;
 
-        tree.children.splice(newIndex, 0, {
+        parent.children.splice(newIndex, 0, {
           ...node,
           lang,
           value: node.value,
@@ -71,12 +72,12 @@ export function remarkCodeExample({ metas = {} } = {}) {
     visitCode(
       tree,
       'code-example-copy',
-      ({ node, index, lang, copyToBefore = false, meta, newMeta }) => {
+      ({ node, index, parent, lang, copyToBefore = false, meta, newMeta }) => {
         const newIndex = copyToBefore ? index : index + 1;
 
         const extra = Object.entries(metas?.[lang] ?? {});
 
-        tree.children.splice(newIndex, 0, {
+        parent.children.splice(newIndex, 0, {
           type: 'code',
           lang,
           value: ast2md({ ...node, meta: stringify(meta) }),
