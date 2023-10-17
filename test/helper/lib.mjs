@@ -8,11 +8,3 @@ export function transform(input, option = {}) {
     .process(input)
     .then((file) => file.toString());
 }
-
-export function getUtils(t) {
-  return {
-    sameText(actul, expected) {
-      t.is(actul.trim(), expected.trim());
-    },
-  };
-}

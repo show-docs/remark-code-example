@@ -1,7 +1,6 @@
-// eslint-disable-next-line import/no-unresolved
 import test from 'ava';
 
-import { getUtils, transform } from './helper/lib.mjs';
+import { transform } from './helper/lib.mjs';
 
 test('code alias', async (t) => {
   const input = `
@@ -9,17 +8,10 @@ test('code alias', async (t) => {
 \`\`\`
 `;
 
-  const expected = `
-\`\`\`css
-\`\`\`
-
-\`\`\`less
-\`\`\`
-`;
-
   const output = await transform(input);
 
-  getUtils(t).sameText(expected, output);
+  t.snapshot(input);
+  t.snapshot(output);
 });
 
 test('code alias copy', async (t) => {
@@ -28,17 +20,10 @@ test('code alias copy', async (t) => {
 \`\`\`
 `;
 
-  const expected = `
-\`\`\`css tab
-\`\`\`
-
-\`\`\`less tab
-\`\`\`
-`;
-
   const output = await transform(input);
 
-  getUtils(t).sameText(expected, output);
+  t.snapshot(input);
+  t.snapshot(output);
 });
 
 test('code alias copy before', async (t) => {
@@ -47,17 +32,10 @@ test('code alias copy before', async (t) => {
 \`\`\`
 `;
 
-  const expected = `
-\`\`\`less tab
-\`\`\`
-
-\`\`\`css tab
-\`\`\`
-`;
-
   const output = await transform(input);
 
-  getUtils(t).sameText(expected, output);
+  t.snapshot(input);
+  t.snapshot(output);
 });
 
 test('code alias child', async (t) => {
@@ -69,18 +47,8 @@ test('code alias child', async (t) => {
    \`\`\`
 `;
 
-  const expected = `
-# heading 1
-
-## heading 2
-
-*   \`\`\`css
-    \`\`\`
-    \`\`\`less
-    \`\`\`
-`;
-
   const output = await transform(input);
 
-  getUtils(t).sameText(expected, output);
+  t.snapshot(input);
+  t.snapshot(output);
 });
