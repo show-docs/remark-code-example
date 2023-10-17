@@ -21,7 +21,7 @@ npm install remark remark-code-example --save-dev
 ## Usage
 
 ```mjs
-import readFileSync from 'fs';
+import readFileSync from 'node:fs';
 
 import { remark } from 'remark';
 import { remarkCodeExample } from 'remark-code-example';
