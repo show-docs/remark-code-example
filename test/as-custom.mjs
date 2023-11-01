@@ -4,7 +4,7 @@ import { transform } from './helper/lib.mjs';
 
 test('code example', async (t) => {
   const input = `
-\`\`\`css other code-example=custom copy-as-tab
+\`\`\`css other code-example=custom any
 \`\`\`
 `;
 

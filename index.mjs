@@ -23,17 +23,21 @@ function visitCode(tree, key, visitor) {
         meta.delete('copy-to-before');
       }
 
-      const hasTab = meta.has('copy-as-tab');
-      const copyAsTab = meta.get('copy-as-tab');
-
-      if (hasTab && key !== 'code-alias-copy') {
-        meta.delete('copy-as-tab');
-      }
-
       const newMeta = new Map();
 
-      if (hasTab) {
-        newMeta.set('tab', copyAsTab);
+      if (key.includes('copy')) {
+        const tabKey = 'copy-as-tab';
+
+        const hasTab = meta.has(tabKey);
+        const copyAsTab = meta.get(tabKey);
+
+        if (hasTab && key !== 'code-alias-copy') {
+          meta.delete(tabKey);
+        }
+
+        if (hasTab) {
+          newMeta.set('tab', copyAsTab);
+        }
       }
 
       visitor({
