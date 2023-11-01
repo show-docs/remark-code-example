@@ -23,7 +23,7 @@ function visitCode(tree, key, visitor) {
         meta.delete('copy-to-before');
       }
 
-      const newMeta = new Map();
+      const newMeta = new Map(meta);
 
       if (key.includes('copy')) {
         const tabKey = 'copy-as-tab';
@@ -54,6 +54,30 @@ function visitCode(tree, key, visitor) {
 }
 
 /* eslint-disable no-param-reassign */
+
+function apply(node, { meta, newMeta, parent, index }, result) {
+  if (meta.has('copy@')) {
+    parent.children.splice(index, 0, result);
+
+    const io = new Map(newMeta).delete('copy@');
+
+    node.meta = stringify(io);
+  } else if (meta.has('@copy')) {
+    parent.children.splice(index + 1, 0, result);
+
+    const io = new Map(newMeta).delete('@copy');
+
+    node.meta = stringify(io);
+  } else {
+    delete node.type;
+    delete node.lang;
+    delete node.meta;
+    delete node.value;
+    delete node.position;
+
+    Object.assign(node, result);
+  }
+}
 
 export function remarkCodeExample({ metas = {} } = {}) {
   return (tree) => {
@@ -92,14 +116,36 @@ export function remarkCodeExample({ metas = {} } = {}) {
       },
     );
 
-    visitCode(tree, 'code-example', ({ node, lang, meta, newMeta }) => {
+    visitCode(tree, 'code-example', ({ node, lang, meta }) => {
       node.value = ast2md({ ...node, meta: stringify(meta) });
 
       node.lang = lang;
 
       const extra = Object.entries(metas?.[lang] ?? {});
 
-      node.meta = stringify(new Map([...extra, ...newMeta]));
+      node.meta = stringify(new Map(extra));
     });
+
+    visitCode(
+      tree,
+      '@plain',
+      ({ node, lang, meta, index, parent, newMeta }) => {
+        if (lang === 'markdown') {
+          apply(
+            node,
+            { meta, newMeta, parent, index },
+            {
+              type: 'paragraph',
+              children: [
+                {
+                  type: 'text',
+                  value: node.value,
+                },
+              ],
+            },
+          );
+        }
+      },
+    );
   };
 }

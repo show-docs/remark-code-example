@@ -112,8 +112,23 @@ flowchart
 ```
 ````
 
+### @plain
+
+````markdown
+Turn
+
+```markdown @plain
+anything
+```
+
+Into
+
+anything
+````
+
 ## Related
 
 - [markdown-code-block-meta](https://github.com/nice-move/markdown-code-block-meta)
+- [rehype-extended-table](https://github.com/nice-move/rehype-extended-table)
 - [remark-docusaurus](https://github.com/nice-move/remark-docusaurus)
 - [remark-kroki](https://github.com/nice-move/remark-kroki)
