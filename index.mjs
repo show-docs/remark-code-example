@@ -1,9 +1,27 @@
 import { getValue, parse, stringify } from 'markdown-code-block-meta';
+import {
+  directiveFromMarkdown,
+  directiveToMarkdown,
+} from 'mdast-util-directive';
+import { fromMarkdown } from 'mdast-util-from-markdown';
 import { toMarkdown } from 'mdast-util-to-markdown';
+import { directive } from 'micromark-extension-directive';
 import { visit } from 'unist-util-visit';
 
 function ast2md(ast) {
-  return toMarkdown({ type: 'root', children: [ast] }).trim();
+  return toMarkdown(
+    { type: 'root', children: [ast] },
+    {
+      extensions: [directiveToMarkdown()],
+    },
+  ).trim();
+}
+
+function md2ast(md) {
+  return fromMarkdown(md, {
+    extensions: [directive()],
+    mdastExtensions: [directiveFromMarkdown()],
+  });
 }
 
 function visitCode(tree, key, visitor) {
@@ -14,6 +32,18 @@ function visitCode(tree, key, visitor) {
       const meta = parse(node.meta);
 
       const lang = getValue(meta.get(key)) || 'markdown';
+
+      if (key === 'code-eval-copy' && ['md', 'markdown'].includes(lang)) {
+        const list = md2ast(node.value).children;
+
+        parent.children.splice(index + 1, 0, ...list);
+
+        meta.delete(key);
+
+        node.meta = stringify(meta);
+
+        return;
+      }
 
       meta.delete(key);
 
@@ -101,5 +131,7 @@ export function remarkCodeExample({ metas = {} } = {}) {
 
       node.meta = stringify(new Map([...extra, ...newMeta]));
     });
+
+    visitCode(tree, 'code-eval-copy');
   };
 }
